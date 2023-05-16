@@ -7,8 +7,7 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "npm": "^9.6.2",
-    "pug": "^3.0.2",
-    "start": "^5.1.0"
+    "pug": "^3.0.2"
   },
   "scripts": {
   }
