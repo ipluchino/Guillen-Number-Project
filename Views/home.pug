@@ -1,0 +1,19 @@
+extends layout.pug 
+
+block content 
+    h1 Guillen Numbers
+    h4 Last Updated #{data[0].currentDate}
+    table
+        thead
+            tr
+                th Team
+                th RBI via HR
+                th Total RBI
+                th % via HR
+        tbody
+            each entry in data
+                tr
+                    td #{entry.teamName}
+                    td #{entry.homerRBI}
+                    td #{entry.totalRBI}
+                    td #{Math.round(entry.GuillenNumber * 100) / 100}
