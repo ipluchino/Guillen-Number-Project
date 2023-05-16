@@ -12,5 +12,5 @@ app.set('view engine', 'pug');
 app.use('/', require('./routes/root'));
 
 app.listen(80, () => {
-    console.log('Server is running on port 8080')
+    console.log('Server is running on port 80')
 });
