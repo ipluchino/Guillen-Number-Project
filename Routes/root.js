@@ -3,6 +3,7 @@ const fetch = require('cross-fetch')
 const router = express.Router();
 const fs = require('fs');
 const axios = require('axios');
+axios.defaults.baseURL = 'http://localhost:8080';
 
 router.get('/data.json', async (req, res) => {
     let dataJSON;
