@@ -9,7 +9,7 @@ app.locals.pretty = true;
 app.set('view engine', 'pug');
 
 //Handles the routes dealing with the home page.
-app.use('/', require('./Routes/root'));
+app.use('/', require('./routes/root'));
 
 app.listen(8080, () => {
     console.log('Server is running on port 8080')
