@@ -200,6 +200,15 @@ const buildJSON = async () => {
 
 
         const json = JSON.stringify(sortedData);
+
+        fs.unlink('./data.json', (err) => {
+            if (err) {
+              console.error('Error deleting file:', err);
+            } else {
+              console.log('File deleted successfully.');
+            }
+        });
+
         fs.writeFile("data.json", json, (error) => {
             if (error) {
                 console.error(error);
