@@ -17,6 +17,7 @@ router.get('/data.json', async (req, res) => {
    })
 });
 
+//Updates the data in the table
 router.get('/updateData', async (req, res) => {
     getGuillenNumbers(); 
     res.status(200).send("Good");
