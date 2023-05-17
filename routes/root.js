@@ -1,7 +1,7 @@
 const express = require('express');
-const fetch = require('cross-fetch')
+const fetch = require('cross-fetch');
 const router = express.Router();
-const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
+const fs = require('@cyclic.sh/s3fs')('cyclic-drab-pear-ox-veil-ca-central-1');
 const axios = require('axios');
 axios.defaults.baseURL = 'http://localhost:8080';
 
