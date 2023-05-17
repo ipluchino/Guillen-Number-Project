@@ -18,7 +18,7 @@ router.get('/data.json', async (req, res) => {
 });
 
 router.get('/updateData', async (req, res) => {
-    await getGuillenNumbers(); 
+    getGuillenNumbers(); 
     res.status(200).send("Good");
 
 });
