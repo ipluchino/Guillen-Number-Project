@@ -1,12 +1,13 @@
 const express = require('express');
-const fetch = require('cross-fetch');
+const fetch = require('cross-fetch')
 const router = express.Router();
-const fs = require('@cyclic.sh/s3fs')('cyclic-drab-pear-ox-veil-ca-central-1');
+const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
 const axios = require('axios');
 axios.defaults.baseURL = 'http://localhost:8080';
 
 router.get('/data.json', async (req, res) => {
     let dataJSON;
+
     fs.readFile('./data.json', (error, data) => {
         if(error){
            console.log(error);
@@ -187,6 +188,7 @@ const getGuillenNumbers = async (first, last) => {
 }
 
 const buildJSON = async () => {
+    console.log('hello I am here');
     let sortedData;
     fs.readFile('./tempdata.json', (error, data) => {
         if(error){
