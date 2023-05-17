@@ -1,7 +1,7 @@
 const express = require('express');
 const fetch = require('cross-fetch')
 const router = express.Router();
-const fs = require('fs');
+const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
 const axios = require('axios');
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -200,15 +200,6 @@ const buildJSON = async () => {
 
 
         const json = JSON.stringify(sortedData);
-
-        fs.unlink('./data.json', (err) => {
-            if (err) {
-              console.error('Error deleting file:', err);
-            } else {
-              console.log('File deleted successfully.');
-            }
-        });
-
         fs.writeFile("data.json", json, (error) => {
             if (error) {
                 console.error(error);
@@ -220,3 +211,5 @@ const buildJSON = async () => {
 
 
 module.exports = router;
+
+
