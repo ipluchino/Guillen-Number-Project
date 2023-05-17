@@ -18,11 +18,17 @@ router.get('/data.json', async (req, res) => {
 });
 
 //Updates the data in the table
-router.get('/updateData', async (req, res) => {
-    await getGuillenNumbers(); 
+router.get('/updateData/:first/:last', async (req, res) => {
+    await getGuillenNumbers(req.params.first, req.params.last); 
     res.status(200).send("Good");
-
 });
+
+//Builds the JSON file.
+router.get('/buildJSON', async (req, res) => {
+    await buildJSON();
+    res.status(200).send("Good");
+});
+
 
 router.get('/', async (req, res) => {
     const response = await axios.get('./data.json');
@@ -103,12 +109,12 @@ const findHomers = async (games, teamId) => {
 
 const getGameData = async (teamId, season) => {
     const url = `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&season=${season}&sportId=1`;
-
     //Get request to the API
     const response = await fetch(url);
 
     //Acquire the JSON data and filter it to games on opening day and beyond.
     const data = await response.json();
+
     const gameData = data.dates.filter(date => {
         const gameDate = new Date(date.date);
         let currentDate = new Date();
@@ -148,30 +154,60 @@ const getMLBTotals = (data) => {
 
 }
 
-const getGuillenNumbers = async () => {
-    let result = [];
-    for (team of mlbTeams) {
-        result.push(await getGameData(team.id, 2023));
+const getGuillenNumbers = async (first, last) => { 
+    if (parseInt(first) === 0) {
+        const emptyData = [];
+        const emptyDataJson = JSON.stringify(emptyData);
+        fs.writeFileSync('./tempdata.json', emptyDataJson, 'utf8');
     }
-    result.push(getMLBTotals(result));
+    
+    let result = [];
+    for (let i = parseInt(first); i <= parseInt(last); i++) {
+        result.push(await getGameData(mlbTeams[i].id, 2023));
+    }
 
-    result.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
-    const json = JSON.stringify(result);
-    fs.writeFile("data.json", json, (error) => {
-        // throwing the error
-        // in case of a writing problem
-        if (error) {
-          // logging the error
-          console.error(error);
-      
-          throw error;
+    let tempData;
+    fs.readFile('./tempdata.json', (error, data) => {
+        if(error){
+           console.log(error);
+           return;
         }
-      });
+        tempData = JSON.parse(data);
+        tempData.push(...result);
+
+
+        const json = JSON.stringify(tempData);
+        fs.writeFile("tempdata.json", json, (error) => {
+            if (error) {
+                console.error(error);
+                throw error;
+            }
+        });    
+    });
+}
+
+const buildJSON = async () => {
+    let sortedData;
+    fs.readFile('./tempdata.json', (error, data) => {
+        if(error){
+            console.log(error);
+            return;
+        }
+        sortedData = JSON.parse(data);
+        
+        sortedData.push(getMLBTotals(sortedData));
+        sortedData.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
+
+
+        const json = JSON.stringify(sortedData);
+        fs.writeFile("data.json", json, (error) => {
+            if (error) {
+                console.error(error);
+                throw error;
+            }
+        });    
+    });
 }
 
 
 module.exports = router;
-
-
-
-
