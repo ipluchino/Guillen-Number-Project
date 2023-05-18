@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
     const response = await axios.get('./data.json');
     const data = response.data;
     
-    res.render('home', {data: data.data, test: 5});
+    res.render('home', {data: data.data});
 
 });
 
