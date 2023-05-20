@@ -8,7 +8,7 @@ axios.defaults.baseURL = 'http://localhost:8080';
 router.get('/data.json', async (req, res) => {
     let dataJSON;
 
-    fs.readFile('./data.json', (error, data) => {
+    fs.readFileSync('./data.json', (error, data) => {
         if(error){
            console.log(error);
            return;
@@ -168,7 +168,7 @@ const getGuillenNumbers = async (first, last) => {
     }
 
     let tempData;
-    fs.readFile('./tempdata.json', (error, data) => {
+    fs.readFileSync('./tempdata.json', (error, data) => {
         if(error){
            console.log(error);
            return;
@@ -178,7 +178,7 @@ const getGuillenNumbers = async (first, last) => {
 
 
         const json = JSON.stringify(tempData);
-        fs.writeFile("tempdata.json", json, (error) => {
+        fs.writeFileSync("tempdata.json", json, (error) => {
             if (error) {
                 console.error(error);
                 throw error;
@@ -190,7 +190,7 @@ const getGuillenNumbers = async (first, last) => {
 const buildJSON = async () => {
     console.log('hello I am here');
     let sortedData;
-    fs.readFile('./tempdata.json', (error, data) => {
+    fs.readFileSync('./tempdata.json', (error, data) => {
         if(error){
             console.log(error);
             return;
@@ -202,7 +202,7 @@ const buildJSON = async () => {
 
 
         const json = JSON.stringify(sortedData);
-        fs.writeFile("data.json", json, (error) => {
+        fs.writeFileSync("data.json", json, (error) => {
             if (error) {
                 console.error(error);
                 throw error;
