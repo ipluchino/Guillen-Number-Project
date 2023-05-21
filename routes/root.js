@@ -2,40 +2,31 @@ const express = require('express');
 const fetch = require('cross-fetch')
 const router = express.Router();
 const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
-const axios = require('axios');
-axios.defaults.baseURL = 'http://localhost:8080';
 
 router.get('/data.json', async (req, res) => {
-    let dataJSON;
-
-    fs.readFileSync('./data.json', (error, data) => {
-        if(error){
-           console.log(error);
-           return;
-        }
-        dataJSON = JSON.parse(data);
-        res.json({data: dataJSON});
-   })
+    let data = fs.readFileSync('./data.json');
+    data = JSON.parse(data);
+    res.json({data: data});
 });
 
 //Updates the data in the table
 router.get('/updateData/:first/:last', async (req, res) => {
     await getGuillenNumbers(req.params.first, req.params.last); 
-    res.status(200).send("Good");
+    res.status(200).send("Processing Complete");
 });
 
 //Builds the JSON file.
 router.get('/buildJSON', async (req, res) => {
     await buildJSON();
-    res.status(200).send("Good");
+    res.status(200).send("Processing Complete");
 });
 
 
 router.get('/', async (req, res) => {
-    const response = await axios.get('./data.json');
-    const data = response.data;
+    let data = fs.readFileSync('./data.json');
+    data = JSON.parse(data);
     
-    res.render('home', {data: data.data});
+    res.render('home', {data: data});
 
 });
 
@@ -167,48 +158,25 @@ const getGuillenNumbers = async (first, last) => {
         result.push(await getGameData(mlbTeams[i].id, 2023));
     }
 
-    let tempData;
-    fs.readFileSync('./tempdata.json', (error, data) => {
-        if(error){
-           console.log(error);
-           return;
-        }
-        tempData = JSON.parse(data);
-        tempData.push(...result);
+    let tempData = fs.readFileSync('./tempdata.json');
+    tempData = JSON.parse(tempData);
 
+    tempData.push(...result);
 
-        const json = JSON.stringify(tempData);
-        fs.writeFileSync("tempdata.json", json, (error) => {
-            if (error) {
-                console.error(error);
-                throw error;
-            }
-        });    
-    });
+    const newData = JSON.stringify(tempData);
+    fs.writeFileSync('./tempdata.json', newData, 'utf8');
 }
 
 const buildJSON = async () => {
-    console.log('hello I am here');
-    let sortedData;
-    fs.readFileSync('./tempdata.json', (error, data) => {
-        if(error){
-            console.log(error);
-            return;
-        }
-        sortedData = JSON.parse(data);
-        
-        sortedData.push(getMLBTotals(sortedData));
-        sortedData.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
+    console.log('Building JSON');
+    let data = fs.readFileSync('./tempdata.json');
+    data = JSON.parse(data);
 
+    data.push(getMLBTotals(data));
+    data.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
 
-        const json = JSON.stringify(sortedData);
-        fs.writeFileSync("data.json", json, (error) => {
-            if (error) {
-                console.error(error);
-                throw error;
-            }
-        });    
-    });
+    const json = JSON.stringify(data);
+    fs.writeFileSync('./data.json', json, 'utf8');
 }
 
 
