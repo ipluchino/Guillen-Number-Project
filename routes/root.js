@@ -9,6 +9,12 @@ router.get('/data.json', async (req, res) => {
     res.json({data: data});
 });
 
+router.get('/tempdata.json', async (req, res) => {
+    let data = fs.readFileSync('./tempdata.json');
+    data = JSON.parse(data);
+    res.json({data: data});
+});
+
 //Updates the data in the table
 router.get('/updateData/:first/:last', async (req, res) => {
     await getGuillenNumbers(req.params.first, req.params.last); 
