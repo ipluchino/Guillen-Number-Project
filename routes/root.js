@@ -1,15 +1,18 @@
 const express = require('express');
 const fetch = require('cross-fetch')
 const router = express.Router();
-//const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3()
+require('dotenv').config();
+
 
 router.get('/data.json', async (req, res) => {
     let data = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./data.json",
     }).promise()
+
+    data = JSON.parse(data.Body.toString());
 
     res.json({data: data});
 });
@@ -19,6 +22,8 @@ router.get('/tempdata.json', async (req, res) => {
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
     }).promise()
+
+    data = JSON.parse(data.Body.toString());
 
     res.json({data: data});
 });
@@ -41,6 +46,8 @@ router.get('/', async (req, res) => {
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./data.json",
     }).promise()
+
+    data = JSON.parse(data.Body.toString());
     
     res.render('home', {data: data});
 
@@ -183,6 +190,7 @@ const getGuillenNumbers = async (first, last) => {
         Key: "./tempdata.json",
     }).promise()
 
+    tempData = JSON.parse(tempData.Body.toString());
 
     tempData.push(...result);
 
@@ -201,6 +209,8 @@ const buildJSON = async () => {
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
     }).promise()
+
+    data = JSON.parse(data.Body.toString());
 
     data.push(getMLBTotals(data));
     data.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
