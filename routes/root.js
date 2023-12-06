@@ -8,7 +8,7 @@ const s3 = new AWS.S3()
 router.get('/data.json', async (req, res) => {
     let data = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "data.json",
+        Key: "./data.json",
     }).promise()
 
     data = JSON.parse(data);
@@ -18,7 +18,7 @@ router.get('/data.json', async (req, res) => {
 router.get('/tempdata.json', async (req, res) => {
     let data = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "tempdata.json",
+        Key: "./tempdata.json",
     }).promise()
 
     data = JSON.parse(data);
@@ -41,7 +41,7 @@ router.get('/buildJSON', async (req, res) => {
 router.get('/', async (req, res) => {
     let data = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "data.json",
+        Key: "./data.json",
     }).promise()
 
     data = JSON.parse(data);
@@ -173,7 +173,7 @@ const getGuillenNumbers = async (first, last) => {
         await s3.putObject({
             Body: emptyDataJson,
             Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-            Key: "tempdata.json",
+            Key: "./tempdata.json",
         }).promise()
     }
     
@@ -184,7 +184,7 @@ const getGuillenNumbers = async (first, last) => {
 
     let tempData = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "tempdata.json",
+        Key: "./tempdata.json",
     }).promise()
 
     tempData = JSON.parse(tempData);
@@ -196,7 +196,7 @@ const getGuillenNumbers = async (first, last) => {
     await s3.putObject({
         Body: newData,
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "tempdata.json",
+        Key: "./tempdata.json",
     }).promise()
 }
 
@@ -204,7 +204,7 @@ const buildJSON = async () => {
     console.log('Building JSON');
     let data = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "tempdata.json",
+        Key: "./tempdata.json",
     }).promise()
     data = JSON.parse(data);
 
@@ -216,7 +216,7 @@ const buildJSON = async () => {
     await s3.putObject({
         Body: json,
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
-        Key: "data.json",
+        Key: "./data.json",
     }).promise()
 }
 
