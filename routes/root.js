@@ -194,6 +194,8 @@ const getGuillenNumbers = async (first, last) => {
 
     tempData.push(...result);
 
+    console.log(tempData);
+
     const newData = JSON.stringify(tempData);
     
     await s3.putObject({
