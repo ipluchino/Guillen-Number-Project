@@ -184,7 +184,7 @@ const getGuillenNumbers = async (first, last) => {
     for (let i = parseInt(first); i <= parseInt(last); i++) {
         result.push(await getGameData(mlbTeams[i].id, 2023));
     }
-
+    
     let tempData = await s3.getObject({
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
@@ -194,18 +194,13 @@ const getGuillenNumbers = async (first, last) => {
 
     tempData.push(...result);
 
-    console.log(result)
-
     const newData = JSON.stringify(tempData);
-    
-    console.log('Testing');
+
     await s3.putObject({
         Body: newData,
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
     }).promise()
-
-    console.log('Testing2');
 }
 
 const buildJSON = async () => {
