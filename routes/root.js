@@ -194,15 +194,18 @@ const getGuillenNumbers = async (first, last) => {
 
     tempData.push(...result);
 
-    console.log(tempData);
+    console.log(result)
 
     const newData = JSON.stringify(tempData);
     
+    console.log('Testing');
     await s3.putObject({
         Body: newData,
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
     }).promise()
+
+    console.log('Testing2');
 }
 
 const buildJSON = async () => {
