@@ -1,16 +1,26 @@
 const express = require('express');
 const fetch = require('cross-fetch')
 const router = express.Router();
-const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
+//const fs = require('@cyclic.sh/s3fs')(process.env.CYCLIC_BUCKET_NAME)
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3()
 
 router.get('/data.json', async (req, res) => {
-    let data = fs.readFileSync('./data.json');
+    let data = await s3.getObject({
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "data.json",
+    }).promise()
+
     data = JSON.parse(data);
     res.json({data: data});
 });
 
 router.get('/tempdata.json', async (req, res) => {
-    let data = fs.readFileSync('./tempdata.json');
+    let data = await s3.getObject({
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "tempdata.json",
+    }).promise()
+
     data = JSON.parse(data);
     res.json({data: data});
 });
@@ -29,7 +39,11 @@ router.get('/buildJSON', async (req, res) => {
 
 
 router.get('/', async (req, res) => {
-    let data = fs.readFileSync('./data.json');
+    let data = await s3.getObject({
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "data.json",
+    }).promise()
+
     data = JSON.parse(data);
     
     res.render('home', {data: data});
@@ -156,7 +170,11 @@ const getGuillenNumbers = async (first, last) => {
     if (parseInt(first) === 0) {
         const emptyData = [];
         const emptyDataJson = JSON.stringify(emptyData);
-        fs.writeFileSync('./tempdata.json', emptyDataJson, 'utf8');
+        await s3.putObject({
+            Body: emptyDataJson,
+            Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+            Key: "tempdata.json",
+        }).promise()
     }
     
     let result = [];
@@ -164,25 +182,42 @@ const getGuillenNumbers = async (first, last) => {
         result.push(await getGameData(mlbTeams[i].id, 2023));
     }
 
-    let tempData = fs.readFileSync('./tempdata.json');
+    let tempData = await s3.getObject({
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "tempdata.json",
+    }).promise()
+
     tempData = JSON.parse(tempData);
 
     tempData.push(...result);
 
     const newData = JSON.stringify(tempData);
-    fs.writeFileSync('./tempdata.json', newData, 'utf8');
+    
+    await s3.putObject({
+        Body: newData,
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "tempdata.json",
+    }).promise()
 }
 
 const buildJSON = async () => {
     console.log('Building JSON');
-    let data = fs.readFileSync('./tempdata.json');
+    let data = await s3.getObject({
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "tempdata.json",
+    }).promise()
     data = JSON.parse(data);
 
     data.push(getMLBTotals(data));
     data.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
 
     const json = JSON.stringify(data);
-    fs.writeFileSync('./data.json', json, 'utf8');
+
+    await s3.putObject({
+        Body: json,
+        Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
+        Key: "data.json",
+    }).promise()
 }
 
 
