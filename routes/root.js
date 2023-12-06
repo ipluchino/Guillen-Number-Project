@@ -11,7 +11,6 @@ router.get('/data.json', async (req, res) => {
         Key: "./data.json",
     }).promise()
 
-    data = JSON.parse(data);
     res.json({data: data});
 });
 
@@ -21,7 +20,6 @@ router.get('/tempdata.json', async (req, res) => {
         Key: "./tempdata.json",
     }).promise()
 
-    data = JSON.parse(data);
     res.json({data: data});
 });
 
@@ -43,8 +41,6 @@ router.get('/', async (req, res) => {
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./data.json",
     }).promise()
-
-    data = JSON.parse(data);
     
     res.render('home', {data: data});
 
@@ -187,7 +183,6 @@ const getGuillenNumbers = async (first, last) => {
         Key: "./tempdata.json",
     }).promise()
 
-    tempData = JSON.parse(tempData);
 
     tempData.push(...result);
 
@@ -206,7 +201,6 @@ const buildJSON = async () => {
         Bucket: "cyclic-drab-pear-ox-veil-ca-central-1",
         Key: "./tempdata.json",
     }).promise()
-    data = JSON.parse(data);
 
     data.push(getMLBTotals(data));
     data.sort((a, b) => b.GuillenNumber - a.GuillenNumber);
