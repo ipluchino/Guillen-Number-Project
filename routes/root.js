@@ -89,7 +89,7 @@ const mlbTeams = [
 
 
 const findTotalRBI = async (teamId) => {
-    const url = `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=hitting&season=2023`;
+    const url = `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=hitting&season=2024`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -134,8 +134,18 @@ const getGameData = async (teamId, season) => {
         const gameDate = new Date(date.date);
         let currentDate = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
-        const march30th = new Date('2023-03-30');
-        return gameDate >= march30th && gameDate <= currentDate;
+        
+        //The Padres and Dodgers had an earlier opening day series in Korea. The rest of the teams started on March 28th, 2024.
+        const openingDayEarlyGameOne = new Date('2024-03-20');
+        const openingDayEarlyGameTwo = new Date('2024-03-21');
+        const openingDayRegular = new Date('2024-03-28');
+
+        if (teamId === 135 || teamId === 119) {
+            return (gameDate === openingDayEarlyGameOne || gameDate === openingDayEarlyGameTwo) || (gameDate >= openingDayRegular && gameDate <= currentDate);
+        }
+        else {
+            return gameDate >= openingDayRegular && gameDate <= currentDate;
+        }
       });
 
     let  gameIds = [];
@@ -182,7 +192,7 @@ const getGuillenNumbers = async (first, last) => {
     
     let result = [];
     for (let i = parseInt(first); i <= parseInt(last); i++) {
-        result.push(await getGameData(mlbTeams[i].id, 2023));
+        result.push(await getGameData(mlbTeams[i].id, 2024));
     }
     
     let tempData = await s3.getObject({
